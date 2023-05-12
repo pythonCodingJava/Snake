@@ -21,6 +21,7 @@ public class snake {
     public boolean dead = false;
 		
     public boolean ai = false;
+    public boolean moveByDir = true;
 
     //1 is right
     //2 is left
@@ -63,7 +64,7 @@ public class snake {
             if(s>50) {
                 AI.warp = true;
             }
-            path = AI.getPath(board, snek, foodx, foody);
+            // updatePath();
         // }
     }
 
@@ -102,7 +103,7 @@ public class snake {
             y = board.length-1;
         }
 
-        if(!ai) snek.get(0).Pos(x,y);
+        if(moveByDir) snek.get(0).Pos(x,y);
 
         for(int i = 1; i<snek.size(); i++) {
             block b = snek.get(i);
@@ -159,11 +160,7 @@ public class snake {
             if(toGet.x == x && toGet.y == y){
                 toGet = path.get(path.size()-1);
             }
-            // try {
-            //     toGet = path.get(path.indexOf(new Point(snek.get(0).x, snek.get(0).y))-1);
-            // }catch(Exception e) {
-            //     toGet = path.get(path.size()-1);
-            // }
+
         }
 
         snek.get(0).Pos(toGet.x, toGet.y);
@@ -171,21 +168,61 @@ public class snake {
 
         if(!dead){
             empty();
-            // if(ai){
-            //     for(int i = 1; i<snek.size(); i++) {	
-            //         snek.get(i).Pos(snek.get(i-1).prex, snek.get(i-1).prey);
-            //     }
-                
-            //     for(block b : snek) {
-            //         try{
-            //         board[b.y][b.x] = 1;
-            //         }catch(Exception e) {}
-            //     }
-            // }else {
-            //     updatePos();
-            // }
             updatePos();
+            if(ai){
+                try{
+                    updatePath();
+                    moveByDir = false;
+                }catch(Exception e){
+                    // dumbMove();
+                    moveByDir = true;
+                }
+            }
         }
+    }
+
+    public void dumbMove(){
+        if(!willDie(direction)) return;
+
+        for(int dir = 1; dir<5; dir++){
+            if(!willDie(dir)){
+                direction = dir;
+            }
+        }
+    }
+
+    private boolean willDie(int direction){
+        int x = snek.get(0).x;
+        int y = snek.get(0).y;
+        
+        if(direction==1) {
+            x++;
+        }else if(direction==2) {
+            x--;
+        }else if(direction==3) {
+            y--;
+        }else if(direction==4) {
+            y++;
+        }
+        
+        if(x>=board[0].length) {
+            x = 0;
+        }else if(x < 0) {
+            x = board[0].length-1;
+        }else if(y>=board.length) {
+            y = 0;
+        }else if(y < 0) {
+            y = board.length-1;
+        }
+
+        for(int i = 1; i<snek.size(); i++) {
+            block b = snek.get(i);
+            if(snek.get(0).x==b.x && snek.get(0).y==b.y) {
+                return true;
+            }
+        }
+
+        return false;
     }
     
     public void reset(Dimension size, int resolution){
@@ -194,19 +231,23 @@ public class snake {
         for(int i = 0; i<s; i++) {
             snek.add(new block(((size.width-1)/resolution) - i, ((size.height/2)/resolution)));
         }
-        empty();
+        // empty();
         board = new int[size.height/resolution][size.width/resolution];
+        dead = false;
+        direction = 1;
         foods = new ArrayList<Point>();
         for(int i = 0; i<1; i++) {
             getFood();
         }
         updatePos();
-        dead = false;
-        direction = 1;
     }
 
     public void updatePath(){
-        path = AI.getPath(board,snek, foodx, foody);
+        try{
+            path = AI.getPath(board, snek, foodx, foody, true);
+        }catch(Exception e){
+            path = AI.getPath(board, snek, foodx, foody, false);
+        }
     }
 
     public void updateDir(Point p){

@@ -5,18 +5,30 @@ import java.util.ArrayList;
 
 public class AI {
     static boolean warp = false;
-    public static ArrayList<Point> getPath(int[][] b, ArrayList<block> s, int foodx, int foody){
+    public static ArrayList<Point> getPath(int[][] b, ArrayList<block> s, int foodx, int foody, boolean thick){
         ArrayList<Point> p = new ArrayList<Point>();
         
         Point start = new Point(s.get(0).x, s.get(0).y);
         Point end = new Point(foodx, foody);
         ArrayList<node> walls = new ArrayList<node>();
         node[][] bClone = new node[b.length][b[0].length];
+        int[][] off = {{1,0},{-1,0},{0,-1},{0,1}};
         for(int i = 0; i<b.length; i++) {
             for(int j = 0; j<b[0].length; j++) {
                 bClone[i][j] = new node(j,i);
-                if(b[i][j]==1 && new Point(j,i)!=start) {
+                if(b[i][j]==1 && !(j == start.x && i == start.y)) {
                     walls.add(bClone[i][j]);
+                    if(thick){
+                        for(int[] o : off){
+                            int x = j + o[0];
+                            int y = i + o[1];
+                            if((x >= 0 && x<bClone[0].length) && (y >= 0 && y<bClone.length)){
+                                if(!(x == start.x && y == start.y) && !walls.contains(bClone[y][x])){
+                                    walls.add(bClone[y][x]);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -116,18 +128,30 @@ public class AI {
         return p;
     }
     
-    public static ArrayList<Point> reverseAstar(int[][] b, ArrayList<block> s, int foodx, int foody){
+    public static ArrayList<Point> reverseAstar(int[][] b, ArrayList<block> s, int foodx, int foody, boolean thick){
         ArrayList<Point> p = new ArrayList<Point>();
         
         Point start = new Point(s.get(0).x, s.get(0).y);
         Point end = new Point(foodx, foody);
         ArrayList<node> walls = new ArrayList<node>();
         node[][] bClone = new node[b.length][b[0].length];
+        int[][] off = {{1,0},{-1,0},{0,1},{0,-1}};
         for(int i = 0; i<b.length; i++) {
             for(int j = 0; j<b[0].length; j++) {
                 bClone[i][j] = new node(j,i);
                 if(b[i][j]==1 && new Point(j,i)!=start) {
                     walls.add(bClone[i][j]);
+                    if(thick){
+                        for(int[] o : off){
+                            int x = j + o[0];
+                            int y = i + o[1];
+                            if((x >= 0 && x<bClone[0].length) && (y >= 0 && y<bClone.length)){
+                                if(!(x == start.x && y == start.y) && !walls.contains(bClone[y][x])){
+                                    walls.add(bClone[y][x]);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

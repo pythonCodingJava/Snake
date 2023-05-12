@@ -7,20 +7,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Scanner;
-
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import Logic.*;
-import GraphicsExtension.*;
 
 public class Main {
     
-	static Dimension size = /*Toolkit.getDefaultToolkit().getScreenSize();//*/new Dimension(500,500);
+	static Dimension size = Toolkit.getDefaultToolkit().getScreenSize();//*/new Dimension(500,500);
 
 	static snake me;
 	static panel p;
@@ -41,7 +35,7 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 int thresh = 100;
-                if(me.ai) thresh = 10;
+                if(me.ai) thresh = 5;
                 if((System.currentTimeMillis()-time) >= thresh) {
                     // System.out.println(me.snek.get(0).x+", "+me.snek.get(0).y);
                     me.update();
@@ -88,12 +82,13 @@ public class Main {
 				}else if(key==80) {
 					p.postProcessing = !p.postProcessing;
 				}else if(key==82 && me.dead) {
-                    me.reset(size, resolution);
+                    me = new snake((int)Math.ceil((double)size.height/resolution),(int)Math.ceil((double)size.width/resolution), size, resolution);
 				    t.stop();
 				}
 
                 if(key == KeyEvent.VK_A){
                     me.ai = !me.ai;
+                    me.moveByDir = !me.moveByDir;
                     me.updatePath();
                 }
 			}

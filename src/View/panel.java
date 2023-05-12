@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
@@ -67,7 +66,7 @@ public class panel extends JPanel{
         if(shakeIntensity<=0) {
             offsetX=0;
             offsetY=0;
-            shakeIntensity = 20;
+            shakeIntensity = 12;
         }
     }
 
@@ -100,12 +99,31 @@ public class panel extends JPanel{
 				g2d.setColor(Color.red.darker().darker());
                 g2d.fill(tbf);
             }
+            
+            g2d.setColor(Color.cyan.darker().darker());                            
+            int[][] off = {{1,0},{-1,0},{0,1},{0,-1}};
+            for(block b : Main.me.snek){
+                int i = b.y;
+				int j = b.x;
+				if(Main.me.snek.indexOf(b) != 0){
+                    for(int[] o : off){
+                        int x = j + o[0];
+                        int y = i + o[1];
+                        if((x >= 0 && x<Main.me.board[0].length) && (y >= 0 && y<Main.me.board.length)){
+                            if(!(x == Main.me.snek.get(0).x && y == Main.me.snek.get(0).y)){
+                                Rectangle2D tbf = new Rectangle2D.Double(x*(resolution)+offsetX, y*(resolution)+offsetY, (resolution), (resolution));
+                                g2d.fill(tbf);
+                            }
+                        }
+                    }
+                }
+            }
 			
             g2d.setColor(Color.cyan);	
 			for(block b : Main.me.snek) {
-				double i = b.y;
-				double j = b.x;
-				Rectangle2D tbf = new Rectangle2D.Double(j*(resolution)+offsetX, i*(resolution)+offsetY, (resolution), (resolution));
+				int i = b.y;
+				int j = b.x;
+                Rectangle2D tbf = new Rectangle2D.Double(j*(resolution)+offsetX, i*(resolution)+offsetY, (resolution), (resolution));
 				g2d.fill(tbf);
 				if(postProcessing) {
 					glow.glowRect(tbf.getX(), tbf.getY(), tbf.getWidth(), tbf.getHeight(), g2d);
