@@ -20,15 +20,18 @@ public class snake {
   
     public boolean dead = false;
 		
+    public boolean ai = false;
+
     //1 is right
     //2 is left
     //3 is up
     //4 is down
     public int direction = 1;
-    
+    public ArrayList<Point> path;
 
     public snake(int rows, int cols, Dimension size, int resolution){
         board = new int[rows][cols];
+        path = new ArrayList<>();
         snek = new ArrayList<>();
         for(int i = 0; i<s; i++) {
             snek.add(new block(((size.width/2)/resolution) - (int)i/s, ((size.height/2)/resolution)));
@@ -54,6 +57,14 @@ public class snake {
         foody = y;
         foods.add(new Point(foodx, foody));
         board[y][x] = 2;
+
+        // if(ai){
+            AI.warp = false;
+            if(s>50) {
+                AI.warp = true;
+            }
+            path = AI.getPath(board, snek, foodx, foody);
+        // }
     }
 
     public boolean checkTaken(int x, int y) {
@@ -91,7 +102,7 @@ public class snake {
             y = board.length-1;
         }
 
-        snek.get(0).Pos(x,y);
+        if(!ai) snek.get(0).Pos(x,y);
 
         for(int i = 1; i<snek.size(); i++) {
             block b = snek.get(i);
@@ -136,8 +147,43 @@ public class snake {
     public void update(){
 		int x = snek.get(0).x;
 		int y = snek.get(0).y;
+
+        Point toGet = new Point(x,y);
+				
+        if(ai) {
+            for(int i = 1; i<path.size(); i++){
+                if(path.get(i).x == snek.get(0).x && path.get(i).y == snek.get(0).y){
+                    toGet = path.get(i-1);
+                }
+            }
+            if(toGet.x == x && toGet.y == y){
+                toGet = path.get(path.size()-1);
+            }
+            // try {
+            //     toGet = path.get(path.indexOf(new Point(snek.get(0).x, snek.get(0).y))-1);
+            // }catch(Exception e) {
+            //     toGet = path.get(path.size()-1);
+            // }
+        }
+
+        snek.get(0).Pos(toGet.x, toGet.y);
+        // updateDir(toGet);
+
         if(!dead){
             empty();
+            // if(ai){
+            //     for(int i = 1; i<snek.size(); i++) {	
+            //         snek.get(i).Pos(snek.get(i-1).prex, snek.get(i-1).prey);
+            //     }
+                
+            //     for(block b : snek) {
+            //         try{
+            //         board[b.y][b.x] = 1;
+            //         }catch(Exception e) {}
+            //     }
+            // }else {
+            //     updatePos();
+            // }
             updatePos();
         }
     }
@@ -148,7 +194,7 @@ public class snake {
         for(int i = 0; i<s; i++) {
             snek.add(new block(((size.width-1)/resolution) - i, ((size.height/2)/resolution)));
         }
-        //p.empty();
+        empty();
         board = new int[size.height/resolution][size.width/resolution];
         foods = new ArrayList<Point>();
         for(int i = 0; i<1; i++) {
@@ -157,5 +203,19 @@ public class snake {
         updatePos();
         dead = false;
         direction = 1;
+    }
+
+    public void updatePath(){
+        path = AI.getPath(board,snek, foodx, foody);
+    }
+
+    public void updateDir(Point p){
+        block head = snek.get(0);
+        int x = p.x-head.x;
+        int y = p.y - head.x;
+        if(x > 0) direction = 1;
+        if(x < 0) direction = 2;
+        if(y > 0) direction = 4;
+        if(y < 0) direction = 3;
     }
 }

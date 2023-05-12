@@ -76,7 +76,7 @@ public class panel extends JPanel{
         super.paintComponent(g);
         
 			Graphics2D g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
 			g2d.setStroke(new BasicStroke(1));
 
@@ -92,12 +92,20 @@ public class panel extends JPanel{
 					Main.me.getFood();
 				}
 			}
+
+            for(Point b : Main.me.path){
+                double i = b.y;
+				double j = b.x;
+				Rectangle2D tbf = new Rectangle2D.Double(j*(resolution)+offsetX, i*(resolution)+offsetY, (resolution), (resolution));
+				g2d.setColor(Color.red.darker().darker());
+                g2d.fill(tbf);
+            }
 			
+            g2d.setColor(Color.cyan);	
 			for(block b : Main.me.snek) {
 				double i = b.y;
 				double j = b.x;
 				Rectangle2D tbf = new Rectangle2D.Double(j*(resolution)+offsetX, i*(resolution)+offsetY, (resolution), (resolution));
-				g2d.setColor(Color.cyan);
 				g2d.fill(tbf);
 				if(postProcessing) {
 					glow.glowRect(tbf.getX(), tbf.getY(), tbf.getWidth(), tbf.getHeight(), g2d);

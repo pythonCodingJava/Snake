@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -39,7 +40,9 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if((System.currentTimeMillis()-time) >= 100) {
+                int thresh = 100;
+                if(me.ai) thresh = 10;
+                if((System.currentTimeMillis()-time) >= thresh) {
                     // System.out.println(me.snek.get(0).x+", "+me.snek.get(0).y);
                     me.update();
                     time = System.currentTimeMillis();
@@ -54,13 +57,12 @@ public class Main {
 		f.setContentPane(p);
 		f.setUndecorated(true);
 		f.getContentPane().setBackground(Color.black);
-		f.addKeyListener(new KeyListener() {
+		f.addKeyListener(new KeyAdapter() {
 
 			@Override
-			public void keyPressed(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-				int key = arg0.getKeyCode();
-				if(key==32) {
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+				if(key == KeyEvent.VK_SPACE) {
 					if(t.isRunning()) {
 						t.stop();
 					}else {
@@ -86,29 +88,14 @@ public class Main {
 				}else if(key==80) {
 					p.postProcessing = !p.postProcessing;
 				}else if(key==82 && me.dead) {
-					// try {
-					// 	File toRead = new File("C:\\Users\\admin\\Desktop\\gameData\\score.txt");
-					// 	Scanner s = new Scanner(toRead);
-					// 	me.bestScore = s.nextDouble();
-					// 	s.close();
-					// }catch(Exception e) {
-					// 	System.out.println("error");
-					// }
                     me.reset(size, resolution);
 				    t.stop();
 				}
-			}
 
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				// TODO Auto-generated method stub
-				
+                if(key == KeyEvent.VK_A){
+                    me.ai = !me.ai;
+                    me.updatePath();
+                }
 			}
 			
 		});
