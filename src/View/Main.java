@@ -14,7 +14,7 @@ import Logic.*;
 
 public class Main {
     
-	static Dimension size = Toolkit.getDefaultToolkit().getScreenSize();//*/new Dimension(500,500);
+	static Dimension size = /*Toolkit.getDefaultToolkit().getScreenSize();//*/new Dimension(500,500);
 
 	static snake me;
 	static panel p;

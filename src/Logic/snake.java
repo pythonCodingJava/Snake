@@ -151,7 +151,7 @@ public class snake {
 
         Point toGet = new Point(x,y);
 				
-        if(ai) {
+        if(ai && !moveByDir && !dead) {
             for(int i = 1; i<path.size(); i++){
                 if(path.get(i).x == snek.get(0).x && path.get(i).y == snek.get(0).y){
                     toGet = path.get(i-1);
@@ -161,9 +161,17 @@ public class snake {
                 toGet = path.get(path.size()-1);
             }
 
+            snek.get(0).Pos(toGet.x, toGet.y);
+            for(int i = 1; i<snek.size(); i++) {
+                block b = snek.get(i);
+                if(snek.get(0).x==b.x && snek.get(0).y==b.y) {
+                    dead = true;
+                    System.out.println("game over");
+                }
+            }
         }
 
-        snek.get(0).Pos(toGet.x, toGet.y);
+        
         // updateDir(toGet);
 
         if(!dead){
@@ -171,10 +179,12 @@ public class snake {
             updatePos();
             if(ai){
                 try{
+                    // dumbMove();
                     updatePath();
                     moveByDir = false;
                 }catch(Exception e){
-                    // dumbMove();
+                    dumbMove();
+                    System.out.println("dummy " + direction);
                     moveByDir = true;
                 }
             }
@@ -187,6 +197,7 @@ public class snake {
         for(int dir = 1; dir<5; dir++){
             if(!willDie(dir)){
                 direction = dir;
+                break;
             }
         }
     }
@@ -217,7 +228,7 @@ public class snake {
 
         for(int i = 1; i<snek.size(); i++) {
             block b = snek.get(i);
-            if(snek.get(0).x==b.x && snek.get(0).y==b.y) {
+            if(x==b.x && y==b.y) {
                 return true;
             }
         }
