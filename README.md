@@ -1,4 +1,4 @@
-#Introduction
+## Introduction
 
 This is a snake game implementation in java with some custom developed graphics features like bloom and particle explosion, using java swing as backbone for the gui. There is also an option for using A* to control the game and view how it makes decisions in the game thus creating an ai controlled feature.
 
